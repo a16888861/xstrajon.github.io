@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>
+        阿森的Blog
+    </title>
+    
+<link rel="stylesheet" href="/libs/highlight/styles/monokai-sublime.css">
+
+    
+<link rel="stylesheet" href="/libs/font-awesome/css/font-awesome.min.css">
+
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body id="bodyx">
+    <div class="hd posts">
+    <a href="/index.html"><i class="fa fa-reply replay-btn" aria-hidden="true"></i></a>
+    <div class="post-title">
+        <p>
+            日记
+        </p>
+        <hr>
+    </div>
+    <div class="post-content">
+        <center><h1>记录日常</h1></center>
+
+<h3 id="2022-02-08"><a href="#2022-02-08" class="headerlink" title="2022-02-08"></a>2022-02-08</h3><p>过了个新年 不知不觉又长大一岁<br/><br>今年过年回家 去见了对象的小姨 一开始慌得一批<br/><br>不过好在对象也帮忙操心去了拿东西的事情 告诉我小姨和姨父喜欢吃啥<br/><br>豆豆念叨了好久的哥哥也回去啦 哈哈哈哈<br/><br>爸爸妈妈想着是今年订婚 双方家长要见一面<br/><br>看哇 这东西 不好说<br/></p>
+<h3 id="2022-02-09"><a href="#2022-02-09" class="headerlink" title="2022-02-09"></a>2022-02-09</h3><p>工作问题记录 关于webSocket的：<br/></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">WebSocketSendMessage</span><br><span class="line">APICommonsController 用了一次 send</span><br><span class="line"></span><br><span class="line">sendMessage 很多地方使用</span><br><span class="line"></span><br><span class="line">sendMessage 这里写一个伪代码的逻辑进行分析</span><br><span class="line">循环设备列表&#123;</span><br><span class="line">	<span class="number">1.</span>先向数据库插入推送信息</span><br><span class="line">	<span class="number">2.</span>取连接的设备列表</span><br><span class="line">	<span class="number">3.</span>判断调用sendMessage传来的设备列表在不在已连接的设备中包含</span><br><span class="line">	是：&#123;(整体发生异常 弹出栈顶元素)</span><br><span class="line">		map为空 首次使用</span><br><span class="line">		是：&#123;</span><br><span class="line">			LinkedBlockingQueue(先进先出)</span><br><span class="line">			创建LinkedBlockingQueue队列</span><br><span class="line">			(存储String类型的时间 再把LinkedBlockingQueue丢到Map中 为什么不直接向map中丢入获取的时间</span><br><span class="line">			这个队列集合我查询了一次 没有地方使用 只存在于WebSocketSendMessage 所以 map的value 个人感觉没必要使用LinkedBlockingQueue</span><br><span class="line">			不过这么写也没啥影响)</span><br><span class="line">			记录到apache的HashedMap中</span><br><span class="line">			WebSocketServer 推送数据</span><br><span class="line">			LinkedBlockingQueue队列不为空 消费数据</span><br><span class="line"></span><br><span class="line">		&#125;否：&#123;</span><br><span class="line">			判断map当中是否记录了这个mac地址</span><br><span class="line">			是：&#123;</span><br><span class="line">				从map取出队列 更新时间</span><br><span class="line">				WebSocketServer 推送数据(发生异常 弹出栈顶元素)</span><br><span class="line">			&#125;否：&#123;</span><br><span class="line">				代表设备没有推送过</span><br><span class="line">				创建LinkedBlockingQueue 插入时间</span><br><span class="line">				WebSocketServer 推送消息</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;否：&#123;</span><br><span class="line">		转发其他服务器进行操作</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">WebSocketService 向表中记录发送日志</span><br><span class="line">推送数据最终调用的是 getBasicRemote()</span><br><span class="line">getAsyncRemote()和getBasicRemote()是异步与同步的区别，大部分情况下，推荐使用getAsyncRemote()</span><br><span class="line">由于getBasicRemote()的同步特性，并且它支持部分消息的发送即sendText(xxx,<span class="keyword">boolean</span> isLast). isLast的值表示是否一次发送消息中的部分消息，对于如下情况:</span><br><span class="line">session.getBasicRemote().sendText(message, <span class="keyword">false</span>); </span><br><span class="line">ession.getBasicRemote().sendBinary(data);</span><br><span class="line">session.getBasicRemote().sendText(message, <span class="keyword">true</span>); </span><br><span class="line">由于同步特性，第二行的消息必须等待第一行的发送完成才能进行，而第一行的剩余部分消息要等第二行发送完才能继续发送，所以在第二行会抛出IllegalStateException异常。如果要使用getBasicRemote()同步发送消息，则避免尽量一次发送全部消息，使用部分消息来发送。</span><br><span class="line"></span><br><span class="line">分析可能发生阻塞的点：</span><br><span class="line"><span class="number">1.</span>LinkedBlockingQueue这个点导致的(可能性较小)</span><br><span class="line"><span class="number">2.</span>getBasicRemote() 上一次的消息还没发送完 下一次的消息又来了 由于同步特性 这里只能等待上一次消息发送完成</span><br><span class="line">等待时间长了 要发送的消息越堆积越多 就导致了堵塞 堵塞之后 可能占用了线程 就导致别的业务在处理的时候 也堵塞了 最终宕机</span><br><span class="line"></span><br><span class="line">这里分析可能出现宕机的点：</span><br><span class="line"><span class="number">1.</span>堵塞之后 就像上次锁表的情况 sql语句不够用 然后一堆等待 所以造成这个情况</span><br><span class="line"><span class="number">2.</span>sql语句堆积过多在等待 加上socket也要做处理(插入或者更新socket相关信息的操作 一直执行不了 也会消息堆积 导致宕机)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="2022-03-12"><a href="#2022-03-12" class="headerlink" title="2022-03-12"></a>2022-03-12</h3><p>兜兜又转转 来北京已经两年了 从当初实习开始到现在 发生了好多的事情<br/><br>现在回忆起来还是感慨万千 不过也该走了 不能在这种环境待下去了<br/><br>这样下去 很难得到成长 一直在反问自己 当初有没有后悔没有去培训 这么长时间 自己心里也有答案了<br/><br>初来北京实习 得亏有朋友帮助 我这艘小船才能在大海中飘飘荡荡的航行下去 慢慢稳住<br/><br>外包真的不好 不过所幸 认识的人和项目经理 愿意去引导 去帮助你成长 真的要感谢<br/><br>不过也不知道还能在北京待多久 真的向往自由啊 管他呢 开心最重要<br/><br>少年已不再 究竟得多努力 才能给她一个阻挡风雨的家<br/></p>
+<hr>
+<center>所有的一切，仅仅是因为喜欢。</center>
+
+
+    </div>
+
+    
+</div>
+    <div class="footer" id="footer">
+    <p>Copyright © 2021 <a class="flink" target="_blank" rel="noopener" href="https://github.com/a16888861">Elliot</a>.
+        <label class="el-switch el-switch-green el-switch-sm" style="vertical-align: sub;">
+            <input type="checkbox" name="switch" id="update_style">
+            <span class="el-switch-style"></span>
+        </label>
+    </p>
+</div>
+<input type="hidden" id="web_style" value="black">
+<input type="hidden" id="valine_appid" value="CmCti21ooOOIzFOhEyFkFvR0-gzGzoHsz">
+<input type="hidden" id="valine_appKey" value="FqiyUqbg7McKN2eG0MCewupf">
+
+<script src="/libs/jquery.min.js"></script>
+
+
+<script src="/libs/highlight/highlight.pack.js"></script>
+
+<script src='//cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js'></script>
+
+<script src="/js/js.js"></script>
+
+<style type="text/css">
+.v * {
+    color: #698fca;
+}
+
+.v .vlist .vcard .vhead .vsys {
+    color: #3a3e4a;
+}
+
+.v .vlist .vcard .vh .vmeta .vat {
+    color: #638fd5;
+}
+
+.v .vlist .vcard .vhead .vnick {
+    color: #6ba1ff;
+}
+
+.v a {
+    color: #8696b1;
+}
+
+.v .vlist .vcard .vhead .vnick:hover {
+    color: #669bfc;
+}
+</style>
+</body>
+
+</html>
