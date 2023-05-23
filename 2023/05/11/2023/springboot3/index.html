@@ -33,12 +33,120 @@
 
 <h3 id="2023-05-11"><a href="#2023-05-11" class="headerlink" title="2023-05-11"></a>2023-05-11</h3><h4 id="了解-AOT-和-GraalVM"><a href="#了解-AOT-和-GraalVM" class="headerlink" title="了解 AOT 和 GraalVM"></a>了解 AOT 和 GraalVM</h4><p>Ahead-of-Time Compilation : 预编译(提前编译)它在 JEP-295 中描述，并在 Java 9 中作为实验性功能添加<br>什么是 AOT:<br>    AOT是提供Java程序性能的一种方法，特别是提供JVM 的启动时间。在启动虚拟机之前，将Java 类编译为本机代码。改进小型和大型 Java 应用程序的启动时间。<br>    JIT (justintime)编译:JVM执行Java字节码，并将经常执行的代码编译为本机代码，这称为实时 (JIT)编译。<br>    为了提高执行速度，Java引入了JIT技术。当JVM发现某个方法或代码块运行特别频繁的时候，就会认为这是“热点代码”(HotSpot Code)。然后 JIT 会把部分“热点代码”编译成本地机器相关的机器码，并进行优化,然后再把编译后的机器码缓存起来，以备下次使用</p>
 <h3 id="2023-05-12"><a href="#2023-05-12" class="headerlink" title="2023-05-12"></a>2023-05-12</h3><h4 id="JDK"><a href="#JDK" class="headerlink" title="JDK"></a>JDK</h4><p>OpenJDK: <a target="_blank" rel="noopener" href="https://idkjava.net/19/">https://idkjava.net/19/</a><br>LibericaJDK: <a target="_blank" rel="noopener" href="https://bell-sw.com/pages/downloads/">https://bell-sw.com/pages/downloads/</a> ,是一个OpenJDK 发行版,为云原生，容器特别优化。</p>
-<p>新特性：<br>1.Java Record<br>Javal4 中预览的新特性叫做 Record，在Java 中，Record是一种特殊的Java类。<br>可以用来创建不可变类，可以代替Lombok，语法简短<br>参考<a target="_blank" rel="noopener" href="https://openjdk.org/jeps/395">JEP 395</a><br>Jackson 2.12 支持 Record 类</p>
+<p>新特性：</p>
+<h5 id="1-Java-Record"><a href="#1-Java-Record" class="headerlink" title="1.Java Record"></a>1.Java Record</h5><p>Javal4 中预览的新特性叫做 Record，在Java 中，Record是一种特殊的Java类。<br>可以用来创建不可变类，可以代替Lombok，语法简短<br>参考<a target="_blank" rel="noopener" href="https://openjdk.org/jeps/395">JEP 395</a><br>Jackson 2.12 支持 Record 类</p>
 <p>Java Record 拥有如下特点:<br>(1)带有全部参数的构造方法 可以定义实例方法和静态方法<br>(2)public 访问器<br>(3)toString(),hashCode(),equals()无 set，get 方法。没有遵循 Bean 的命名规范final 类，不能继承 Record，Record 为隐私的final类。除此之外与普通类一样<br>(4)不可变类，通过构造创建 Record<br>(5)final 属性，不可修改<br>(6)不能声明实例属性，能声明 static 成员</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> testRecord data;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> testRecord <span class="title">getData</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setData</span><span class="params">(testRecord data)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.data = data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> record <span class="title">testRecord</span><span class="params">(String name, Integer age)</span> </span>&#123;</span><br><span class="line">    	<span class="comment">// 紧凑型构造方法</span></span><br><span class="line">        <span class="keyword">public</span> testRecord &#123;</span><br><span class="line">            <span class="keyword">if</span> (age != <span class="keyword">null</span> &amp;&amp; age &lt; <span class="number">6</span>) &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;年龄太小了&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    	<span class="comment">// 定制型构造方法</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">testRecord</span><span class="params">(Integer age)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>(<span class="keyword">null</span>, age);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">nameToUpperCase</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> Optional.ofNullable(name).orElse(<span class="string">&quot;no name&quot;</span>).toUpperCase();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        testRecord zhangSan1 = <span class="keyword">new</span> testRecord(<span class="string">&quot;zhangSan&quot;</span>, <span class="keyword">null</span>);</span><br><span class="line">        System.out.println(zhangSan1.name());</span><br><span class="line">        testRecord zhangSan2 = <span class="keyword">new</span> testRecord(<span class="keyword">null</span>, <span class="keyword">null</span>);</span><br><span class="line">        System.out.println(testRecord.nameToUpperCase(zhangSan2.name));</span><br><span class="line">        testRecord zhangSan3 = <span class="keyword">new</span> testRecord(<span class="number">13</span>);</span><br><span class="line">        testRecord zhangSan4 = <span class="keyword">new</span> testRecord(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">总结：</span><br><span class="line">record可以进行嵌套 &amp;&amp; 实现接口 &amp;&amp; 方法内的 局部代码/临时变量</span><br><span class="line"><span class="keyword">abstract</span> 类java.lang.Record 是所有 Record 的父类有对于 equals()，hashCode0)，toString()方法的定义说明Record 类能够实现 java.io.Serializable 序列化或反序列化</span><br><span class="line">Record 支持泛型，例如 record Gif&lt;T&gt;(T t)&#123;&#125;</span><br><span class="line">java.lang.Class 类与 Record 类有关的两个方法:<span class="function"><span class="keyword">boolean</span> <span class="title">isRecord</span><span class="params">()</span> : 判断一个类是否是 Record 类型RecordComponent[] <span class="title">getRecordComponents</span><span class="params">()</span>: Record 的数组，表示此记录类的所有记录组件</span></span><br></pre></td></tr></table></figure>
+<details>
+    <summary>展开查看record相关案例<progress max="10" value="10"></progress> 100%</summary>
+    <pre>
+        <code>
+public class Test &#123;
+    public testRecord data;
 
-<p>2.Swich开关表达式<br>3.Text Block文本块<br>4.var声明局部变量<br>5.sealed密封类</p>
-<hr>
+<pre><code>public testRecord getData() &#123;
+    return data;
+&#125;
+
+public void setData(testRecord data) &#123;
+    this.data = data;
+&#125;
+
+public interface RecordTest &#123;
+
+    void point();
+&#125;
+
+public record testRecord(String name, Integer age) implements RecordTest &#123;
+    // 紧凑型构造方法
+    public testRecord &#123;
+        if (age != null &amp;&amp; age &lt; 6) &#123;
+            System.out.println(&quot;年龄太小了&quot;);
+        &#125;
+    &#125;
+
+    // 定制型构造方法
+    public testRecord(Integer age) &#123;
+        this(null, age);
+    &#125;
+
+    public static String nameToUpperCase(String name) &#123;
+        return Optional.ofNullable(name).orElse(&quot;no name&quot;).toUpperCase();
+    &#125;
+
+    @Override
+    public void point() &#123;
+        StringJoiner joiner = new StringJoiner(&quot;-&quot;);
+        System.out.println(joiner.add(name).add(age.toString()).toString());
+    &#125;
+
+    record MainRecord(String email) &#123;
+        MainRecord &#123;
+            if (email != null &amp;&amp; email.length() &lt; 6) &#123;
+                System.out.println(&quot;邮件过短&quot;);
+            &#125;
+        &#125;
+    &#125;
+&#125;
+
+public static class TestInstanceofRecord &#123;
+    public boolean isInstanceofTestRecord1(Object obj) &#123;
+        // 写法适用于jdk19
+</code></pre>
+<p>//            if (obj instanceof TestRecord1(Integer age)) {<br>//                return age &gt; 18;<br>//            }<br>            if (obj instanceof TestRecord1 obj1) {<br>                System.out.println(“age:” + obj1.age);<br>                return obj1.age &gt;= 18;<br>            }<br>            return false;<br>        }</p>
+<pre><code>    public record TestRecord1(Integer age) &#123;
+
+    &#125;
+&#125;
+
+public static void main(String[] args) &#123;
+    testRecord zhangSan1 = new testRecord(&quot;zhangSan&quot;, null);
+    System.out.println(zhangSan1.name());
+
+    testRecord zhangSan2 = new testRecord(null, null);
+    System.out.println(testRecord.nameToUpperCase(zhangSan2.name));
+
+    testRecord zhangSan3 = new testRecord(13);
+    testRecord zhangSan4 = new testRecord(1);
+
+    testRecord wangWu = new testRecord(&quot;wangWu&quot;, 38);
+    wangWu.point();
+
+    // record可以当成 局部代码/临时变量 使用
+    record MainRecord(String email) &#123;
+        MainRecord &#123;
+            if (email != null &amp;&amp; email.length() &lt; 6) &#123;
+                System.out.println(&quot;邮件过短&quot;);
+            &#125;
+        &#125;
+    &#125;
+
+    MainRecord testEmail1 = new MainRecord(&quot;1&quot;);
+    MainRecord testEmail2 = new MainRecord(&quot;admin@qq.com&quot;);
+    System.out.println(testEmail2.email);
+
+    testRecord.MainRecord email1 = new testRecord.MainRecord(&quot;wangWu&quot;);
+    System.out.println(email1);
+
+    TestInstanceofRecord.TestRecord1 t1 = new TestInstanceofRecord.TestRecord1(12);
+    TestInstanceofRecord.TestRecord1 t2 = new TestInstanceofRecord.TestRecord1(20);
+    TestInstanceofRecord tir = new TestInstanceofRecord();
+    System.out.println(tir.isInstanceofTestRecord1(t1));
+    System.out.println(tir.isInstanceofTestRecord1(t2));
+    // 可以自动判空
+    System.out.println(tir.isInstanceofTestRecord1(null));
+
+    System.out.println(t1.getClass().isRecord());
+
+    for (RecordComponent component : zhangSan1.getClass().getRecordComponents()) &#123;
+        System.out.println(&quot;component:&quot; + component);
+    &#125;
+&#125;
+</code></pre>
+<p>}<br>        </code><br>    </pre></p>
+</details>
+
+<h5 id="2-Swich开关表达式"><a href="#2-Swich开关表达式" class="headerlink" title="2.Swich开关表达式"></a>2.Swich开关表达式</h5><h5 id="3-Text-Block文本块"><a href="#3-Text-Block文本块" class="headerlink" title="3.Text Block文本块"></a>3.Text Block文本块</h5><h5 id="4-var声明局部变量"><a href="#4-var声明局部变量" class="headerlink" title="4.var声明局部变量"></a>4.var声明局部变量</h5><h5 id="5-sealed密封类"><a href="#5-sealed密封类" class="headerlink" title="5.sealed密封类"></a>5.sealed密封类</h5><hr>
 <center>所有的一切，仅仅是因为喜欢。</center>
     </div>
 
