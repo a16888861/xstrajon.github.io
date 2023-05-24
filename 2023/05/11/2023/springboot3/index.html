@@ -36,9 +36,10 @@
 <p>新特性：</p>
 <h5 id="1-Java-Record"><a href="#1-Java-Record" class="headerlink" title="1.Java Record"></a>1.Java Record</h5><p>Javal4 中预览的新特性叫做 Record，在Java 中，Record是一种特殊的Java类。<br>可以用来创建不可变类，可以代替Lombok，语法简短<br>参考<a target="_blank" rel="noopener" href="https://openjdk.org/jeps/395">JEP 395</a><br>Jackson 2.12 支持 Record 类</p>
 <p>Java Record 拥有如下特点:<br>(1)带有全部参数的构造方法 可以定义实例方法和静态方法<br>(2)public 访问器<br>(3)toString(),hashCode(),equals()无 set，get 方法。没有遵循 Bean 的命名规范final 类，不能继承 Record，Record 为隐私的final类。除此之外与普通类一样<br>(4)不可变类，通过构造创建 Record<br>(5)final 属性，不可修改<br>(6)不能声明实例属性，能声明 static 成员</p>
+<p>编译的时候 jdk会将代码进行一个优化<br>感兴趣可以看编译好的class类进行观察</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">总结：</span><br><span class="line">record可以进行嵌套 &amp;&amp; 实现接口 &amp;&amp; 方法内的 局部代码/临时变量</span><br><span class="line"><span class="keyword">abstract</span> 类java.lang.Record 是所有 Record 的父类有对于 equals()，hashCode0)，toString()方法的定义说明Record 类能够实现 java.io.Serializable 序列化或反序列化</span><br><span class="line">Record 支持泛型，例如 record Gif&lt;T&gt;(T t)&#123;&#125;</span><br><span class="line">java.lang.Class 类与 Record 类有关的两个方法:<span class="function"><span class="keyword">boolean</span> <span class="title">isRecord</span><span class="params">()</span> : 判断一个类是否是 Record 类型RecordComponent[] <span class="title">getRecordComponents</span><span class="params">()</span>: Record 的数组，表示此记录类的所有记录组件</span></span><br></pre></td></tr></table></figure>
 <details>
-    <summary>展开查看record相关案例<progress max="10" value="10"></progress> 100%</summary>
+    <summary>展开查看record相关代码<progress max="10" value="10"></progress> 100%</summary>
     <pre>
         <code>
 public class Test &#123;
@@ -146,17 +147,117 @@ public static void main(String[] args) &#123;
 <p>}<br>        </code><br>    </pre></p>
 </details>
 
-<h5 id="2-Swich开关表达式"><a href="#2-Swich开关表达式" class="headerlink" title="2.Swich开关表达式"></a>2.Swich开关表达式</h5><details>
-    <summary>展开查看Swich相关案例<progress max="10" value="0"></progress> 0%</summary>
+<h5 id="2-Swich开关表达式"><a href="#2-Swich开关表达式" class="headerlink" title="2.Swich开关表达式"></a>2.Swich开关表达式</h5><p>Swich开关表达式和Record可以结合使用来返回业务对象 代码中就不举例子了<br>适用场景：个人理解一般为从外部取数据 然后根据一些业务进行转换值和对象的操作<br>还有一些计算类的操作 场景很多 可以灵活使用</p>
+<details>
+    <summary>展开查看Swich相关代码<progress max="10" value="10"></progress> 100%</summary>
     <pre>
         <code>
-todo 16集
+public class TestSwitch &#123;
+
+<pre><code>public static void main(String[] args) &#123;
+    /**
+     * :和-&gt;不能混合使用
+     */
+    // yield
+    int aa = 1;
+    String a = switch (aa) &#123;
+        case 1:
+            yield &quot;1&quot;;
+        case 2, 3, 4, 5, 6:
+            yield &quot;2&quot;;
+        case 7:
+            yield &quot;3&quot;;
+        default:
+            yield &quot;6&quot;;
+    &#125;;
+    System.out.println(a);
+
+    // 箭头表达式
+    int bb = 5;
+    String b = &quot;&quot;;
+    switch (bb) &#123;
+        case 1 -&gt; b = &quot;1&quot;;
+        case 2, 3, 4, 5, 6 -&gt; b = &quot;2&quot;;
+        case 7 -&gt; b = &quot;3&quot;;
+        default -&gt; b = &quot;6&quot;;
+    &#125;
+    System.out.println(b);
+
+    // 代码块
+    int cc = 1;
+    String c = switch (cc) &#123;
+        case 1 -&gt; &#123;
+            System.out.println(&quot;123&quot;);
+            yield &quot;1&quot;;
+        &#125;
+        case 2, 3, 4, 5, 6 -&gt; &#123;
+            System.out.println(&quot;1234&quot;);
+            yield &quot;2&quot;;
+        &#125;
+        case 7 -&gt; &#123;
+            System.out.println(&quot;1235&quot;);
+            yield &quot;3&quot;;
+        &#125;
+        default -&gt; &#123;
+            System.out.println(&quot;1236&quot;);
+            yield &quot;6&quot;;
+        &#125;
+    &#125;;
+    System.out.println(c);
+&#125;
+</code></pre>
+<p>}<br>        </code><br>    </pre></p>
+</details>
+
+<h5 id="3-Text-Block文本块"><a href="#3-Text-Block文本块" class="headerlink" title="3.Text Block文本块"></a>3.Text Block文本块</h5><p>使用三个双引号括起来的字符串<br>“””<br>内容<br>“””<br>不能将文本块放在单行上 文本块自带换行<br>文本块中左侧和右侧的缩进会自动去除 想表示空格可以使用\40来表示“ ”<br>也可以在缩进之后使用缩进 这样缩进就会生效<br>相关代码中有标准写法 这个知识点没什么好说的 可以像普通字符串一样使用各种方法</p>
+<details>
+    <summary>展开查看相关代码<progress max="10" value="10"></progress> 0%</summary>
+    <pre>
+        <code>
+public class TestTextBlock &#123;
+    public static void main(String[] args) &#123;
+        String test1 = """
+                hahahhdsa
+                dsahuwqjudsa
+                ewqdhusabs""";
+        String test2 = """
+                &#123;"123":"456&#125;%s-%s-%d    123\040\040\040\040\040
+                """;
+        System.out.println(test1.indent(4));
+        System.out.println(test2);
+        // 文本块使用formatted进行格式化 可以简写为 +
+        System.out.println(test2.formatted("1","2",3));
+        System.out.printf((test2) + "%n", "1","2",3);
+        // 删除每行开头和结尾的空白
+        System.out.println(test2.stripIndent());
+        // \可以将文本块内容连续起来
+        String test3 = """
+                hahahhdsa \
+                dsahuwqjudsa
+                ewqdhusabs
+                """;
+        System.out.println(test3.translateEscapes());
+    &#125;
+&#125;
         </code>
     </pre>
 </details>
-##### 3.Text Block文本块
-##### 4.var声明局部变量
-##### 5.sealed密封类
+
+<h5 id="4-var声明局部变量"><a href="#4-var声明局部变量" class="headerlink" title="4.var声明局部变量"></a>4.var声明局部变量</h5><details>
+    <summary>展开查看相关代码<progress max="10" value="10"></progress> 0%</summary>
+    <pre>
+        <code>
+        </code>
+    </pre>
+</details>
+
+<h5 id="5-sealed密封类"><a href="#5-sealed密封类" class="headerlink" title="5.sealed密封类"></a>5.sealed密封类</h5><details>
+    <summary>展开查看相关代码<progress max="10" value="10"></progress> 0%</summary>
+    <pre>
+        <code>
+        </code>
+    </pre>
+</details>
 
 <hr>
 <center>所有的一切，仅仅是因为喜欢。</center>
