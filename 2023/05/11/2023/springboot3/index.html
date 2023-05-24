@@ -211,7 +211,7 @@ public class TestSwitch &#123;
 
 <h5 id="3-Text-Block文本块"><a href="#3-Text-Block文本块" class="headerlink" title="3.Text Block文本块"></a>3.Text Block文本块</h5><p>使用三个双引号括起来的字符串<br>“””<br>内容<br>“””<br>不能将文本块放在单行上 文本块自带换行<br>文本块中左侧和右侧的缩进会自动去除 想表示空格可以使用\40来表示“ ”<br>也可以在缩进之后使用缩进 这样缩进就会生效<br>相关代码中有标准写法 这个知识点没什么好说的 可以像普通字符串一样使用各种方法</p>
 <details>
-    <summary>展开查看相关代码<progress max="10" value="10"></progress> 0%</summary>
+    <summary>展开查看相关代码<progress max="10" value="10"></progress> 100%</summary>
     <pre>
         <code>
 public class TestTextBlock &#123;
@@ -243,20 +243,87 @@ public class TestTextBlock &#123;
     </pre>
 </details>
 
-<h5 id="4-var声明局部变量"><a href="#4-var声明局部变量" class="headerlink" title="4.var声明局部变量"></a>4.var声明局部变量</h5><details>
-    <summary>展开查看相关代码<progress max="10" value="10"></progress> 0%</summary>
+<h5 id="4-var声明局部变量"><a href="#4-var声明局部变量" class="headerlink" title="4.var声明局部变量"></a>4.var声明局部变量</h5><p>这玩意儿和前端写法差不多了都 也不能这么说 其实和kotlion类似了<br>声明简单的临时变量时使用 多步骤逻辑时可以临时使用一下 看代码舒服<br>缺点是无强类型声明 用在代码里容易埋坑</p>
+<details>
+    <summary>展开查看相关代码<progress max="10" value="10"></progress> 100%</summary>
     <pre>
         <code>
+public class TestVar &#123;
+    public static void main(String[] args) &#123;
+        var s1 = "123";
+        var s2 = 123;
+        var s3 = 12.00/3;
+        System.out.println(s1);
+        System.out.println(s2);
+        System.out.println(s3);
+    &#125;
+&#125;
         </code>
     </pre>
 </details>
 
-<h5 id="5-sealed密封类"><a href="#5-sealed密封类" class="headerlink" title="5.sealed密封类"></a>5.sealed密封类</h5><details>
-    <summary>展开查看相关代码<progress max="10" value="10"></progress> 0%</summary>
+<h5 id="5-sealed密封类"><a href="#5-sealed密封类" class="headerlink" title="5.sealed密封类"></a>5.sealed密封类</h5><p>sealed 翻译为密封，密封类(Sealed Classes)的首次提出是在 Javal5 的 JEP 360 中，并在 Java 16 的 JEP 397 再次预览，而在 Java 17 的 JEP 409 成为正式的功能<br>Sealed Classes 主要特点是限制继承,Java 中通过绯承增强，扩展了类的能力，复用某些功能。当这种能力不受控与原有类的设计相违晋，导致不预见的异常逻辑。<br>Sealed Classes 限制无限的护张<br>Java 中已有sealed 的设计<br>1.final 关键字，修饰类不能被继承<br>2.private 限制私有类<br>sealed 作为关键字可在 class 和 interface 上使用，结合 permits 关键字。定义限制承的密封类<br>唯一的缺点就是耦合度变高？看使用场景吧<br>密闭接口的声明和密闭类一样 就不过多叙述了</p>
+<details>
+    <summary>展开查看相关代码<progress max="10" value="10"></progress> 100%</summary>
     <pre>
         <code>
-        </code>
-    </pre>
+/**
+ * sealed class 类名 permits 子类1，2，3
+ * 限制子类继承 没有声明的子类不允许继承
+ * 子类用以下三种修饰:
+ * final 终结 依旧是密闭的
+ * sealed 子类是密闭类 需要子类实现
+ * non-sealed 非密闭类，扩展使用 不受限制
+ */
+public sealed class TestSealed permits TestSealed.Sealed1, TestSealed.Sealed2 &#123;
+
+<pre><code>private String name;
+private Integer age;
+
+public String getName() &#123;
+    return name;
+&#125;
+
+public void setName(String name) &#123;
+    this.name = name;
+&#125;
+
+public Integer getAge() &#123;
+    return age;
+&#125;
+
+public void setAge(Integer age) &#123;
+    this.age = age;
+&#125;
+
+@Override
+public String toString() &#123;
+    return &quot;TestSealed&#123;&quot; +
+            &quot;name=&#39;&quot; + name + &#39;\&#39;&#39; +
+            &quot;, age=&quot; + age +
+            &#39;&#125;&#39;;
+&#125;
+
+public static final class Sealed1 extends TestSealed &#123;
+&#125;
+
+public static sealed class Sealed2 extends TestSealed permits TestSealed.Sealed3&#123;
+&#125;
+
+public static non-sealed class Sealed3 extends Sealed2 &#123;
+&#125;
+</code></pre>
+<p>//    public static final class Sealed4 extends TestSealed {<br>//    }</p>
+<pre><code>public static final class Sealed5 extends Sealed3 &#123;
+&#125;
+
+public static void main(String[] args) &#123;
+    Sealed5 three = new Sealed5();
+    three.setAge(123);
+    System.out.println(three);
+&#125;
+</code></pre>
+<p>}<br>        </code><br>    </pre></p>
 </details>
 
 <hr>
